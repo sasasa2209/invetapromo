@@ -1,14 +1,17 @@
 import React from 'react';
 import {
   View, Text, TouchableOpacity, TextInput, StyleSheet, SafeAreaView,
-  Platform, StatusBar, KeyboardAvoidingView,
+  Platform, StatusBar, KeyboardAvoidingView, ScrollView,
 } from 'react-native';
 import { C } from './tema';
 
 export function Pantalla({ children }) {
   return (
     <SafeAreaView style={[s.pantalla, Platform.OS === 'android' && { paddingTop: StatusBar.currentHeight || 0 }]}>
-      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+      <KeyboardAvoidingView
+        style={{ flex: 1, width: '100%', maxWidth: 480, alignSelf: 'center' }}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      >
         {children}
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -18,7 +21,7 @@ export function Pantalla({ children }) {
 export function Encabezado({ titulo, sub, derecha }) {
   return (
     <View style={s.encabezado}>
-      <View style={{ flex: 1 }}>
+      <View style={{ flex: 1, paddingRight: 8 }}>
         <Text style={s.titulo}>{titulo}</Text>
         {sub ? <Text style={s.sub}>{sub}</Text> : null}
       </View>
@@ -45,7 +48,7 @@ export function Boton({ texto, onPress, tipo = 'primario', deshabilitado, style 
 export function Tarjeta({ children, onPress, style }) {
   const Comp = onPress ? TouchableOpacity : View;
   return (
-    <Comp onPress={onPress} activeOpacity={0.85} style={[s.tarjeta, style]}>
+    <Comp onPress={onPress} activeOpacity={0.9} style={[s.tarjeta, style]}>
       {children}
     </Comp>
   );
@@ -66,6 +69,39 @@ export function Etiqueta({ texto, tono = 'gris' }) {
   );
 }
 
+// Botón de filtro que se enciende y se apaga
+export function Chip({ texto, activo, onPress }) {
+  return (
+    <TouchableOpacity onPress={onPress} activeOpacity={0.8} style={[s.chip, activo && s.chipActivo]}>
+      <Text style={[s.chipTexto, activo && { color: C.blanco }]}>{texto}</Text>
+    </TouchableOpacity>
+  );
+}
+
+export function FilaChips({ children }) {
+  return (
+    <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ flexGrow: 0, marginBottom: 10 }} contentContainerStyle={{ gap: 8, paddingRight: 8 }}>
+      {children}
+    </ScrollView>
+  );
+}
+
+// Barra de porciones: "Quedan 6 de 10" / "¡Últimas 2!"
+export function Porciones({ quedan, total }) {
+  const pct = total > 0 ? Math.max(0, Math.min(1, quedan / total)) : 0;
+  const poco = quedan <= 3;
+  return (
+    <View>
+      <View style={s.barraFondo}>
+        <View style={{ height: 8, borderRadius: 4, width: `${pct * 100}%`, backgroundColor: poco ? C.chile : C.verde }} />
+      </View>
+      <Text style={{ fontSize: 12, fontWeight: '800', color: poco ? C.chile : C.suave, marginTop: 5 }}>
+        {quedan <= 0 ? 'Agotado' : quedan <= 3 ? `¡Últimas ${quedan}!` : `Quedan ${quedan} de ${total}`}
+      </Text>
+    </View>
+  );
+}
+
 export function Campo({ etiqueta, style, ...props }) {
   return (
     <View style={[{ marginBottom: 12 }, style]}>
@@ -75,9 +111,10 @@ export function Campo({ etiqueta, style, ...props }) {
   );
 }
 
-export function Vacio({ titulo, texto, children }) {
+export function Vacio({ icono, titulo, texto, children }) {
   return (
     <View style={s.vacio}>
+      {icono ? <Text style={{ fontSize: 42, marginBottom: 6 }}>{icono}</Text> : null}
       <Text style={[s.titulo, { fontSize: 18, textAlign: 'center' }]}>{titulo}</Text>
       <Text style={[s.sub, { textAlign: 'center', marginVertical: 8 }]}>{texto}</Text>
       {children}
@@ -88,44 +125,47 @@ export function Vacio({ titulo, texto, children }) {
 export function Pestanas({ items, activa, onCambiar }) {
   return (
     <View style={s.pestanas}>
-      {items.map((it) => (
-        <TouchableOpacity key={it.id} style={s.pestana} onPress={() => onCambiar(it.id)}>
-          <View style={[s.pestanaPunto, activa === it.id && { backgroundColor: C.verde }]} />
-          <Text style={[s.pestanaTexto, activa === it.id && { color: C.verde, fontWeight: '800' }]}>{it.texto}</Text>
-        </TouchableOpacity>
-      ))}
+      {items.map((it) => {
+        const on = activa === it.id;
+        return (
+          <TouchableOpacity key={it.id} style={s.pestana} onPress={() => onCambiar(it.id)} activeOpacity={0.7}>
+            <View style={[s.pestanaIcono, on && { backgroundColor: C.verdeClaro }]}>
+              <Text style={{ fontSize: 20 }}>{it.icono}</Text>
+            </View>
+            <Text style={[s.pestanaTexto, on && { color: C.verde, fontWeight: '800' }]}>{it.texto}</Text>
+          </TouchableOpacity>
+        );
+      })}
     </View>
   );
 }
 
 export const estilos = StyleSheet.create({
-  contenido: { padding: 16, paddingBottom: 32 },
-  seccion: { fontSize: 15, fontWeight: '800', color: C.tinta, marginTop: 8, marginBottom: 8 },
+  contenido: { padding: 16, paddingBottom: 40 },
+  seccion: { fontSize: 17, fontWeight: '800', color: C.tinta, marginTop: 14, marginBottom: 8 },
   fila: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   nombre: { fontSize: 16, fontWeight: '700', color: C.tinta },
-  detalle: { fontSize: 13, color: C.suave, marginTop: 2 },
+  detalle: { fontSize: 14, color: C.suave, marginTop: 2, lineHeight: 20 },
 });
 
 const s = StyleSheet.create({
   pantalla: { flex: 1, backgroundColor: C.fondo },
-  encabezado: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingTop: 12, paddingBottom: 8 },
-  titulo: { fontSize: 24, fontWeight: '800', color: C.tinta },
-  sub: { fontSize: 14, color: C.suave, marginTop: 2 },
-  boton: { paddingVertical: 13, paddingHorizontal: 16, borderRadius: 12, alignItems: 'center' },
+  encabezado: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingTop: 14, paddingBottom: 6 },
+  titulo: { fontSize: 26, fontWeight: '900', color: C.tinta, letterSpacing: -0.5 },
+  sub: { fontSize: 14, color: C.suave, marginTop: 2, lineHeight: 20 },
+  boton: { paddingVertical: 14, paddingHorizontal: 16, borderRadius: 14, alignItems: 'center' },
   botonTexto: { fontSize: 15, fontWeight: '800' },
-  tarjeta: {
-    backgroundColor: C.blanco, borderRadius: 14, padding: 14, marginBottom: 10,
-    borderWidth: 1, borderColor: C.linea,
-  },
-  etiqueta: { paddingHorizontal: 9, paddingVertical: 3, borderRadius: 999, alignSelf: 'flex-start' },
-  campoEtiqueta: { fontSize: 13, fontWeight: '700', color: C.suave, marginBottom: 4 },
-  input: {
-    backgroundColor: C.blanco, borderWidth: 1, borderColor: C.linea, borderRadius: 10,
-    paddingHorizontal: 12, paddingVertical: 10, fontSize: 16, color: C.tinta,
-  },
+  tarjeta: { backgroundColor: C.blanco, borderRadius: 18, padding: 16, marginBottom: 12, borderWidth: 1, borderColor: C.linea },
+  etiqueta: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 999, alignSelf: 'flex-start' },
+  chip: { paddingHorizontal: 14, paddingVertical: 8, borderRadius: 999, backgroundColor: C.blanco, borderWidth: 1, borderColor: C.linea },
+  chipActivo: { backgroundColor: C.verde, borderColor: C.verde },
+  chipTexto: { fontSize: 14, fontWeight: '700', color: C.tinta },
+  barraFondo: { height: 8, borderRadius: 4, backgroundColor: '#E3E9E5', overflow: 'hidden' },
+  campoEtiqueta: { fontSize: 13, fontWeight: '700', color: C.suave, marginBottom: 5 },
+  input: { backgroundColor: C.blanco, borderWidth: 1, borderColor: C.linea, borderRadius: 12, paddingHorizontal: 14, paddingVertical: 12, fontSize: 16, color: C.tinta },
   vacio: { alignItems: 'center', padding: 28 },
-  pestanas: { flexDirection: 'row', backgroundColor: C.blanco, borderTopWidth: 1, borderTopColor: C.linea, paddingBottom: 6 },
-  pestana: { flex: 1, alignItems: 'center', paddingVertical: 8 },
-  pestanaPunto: { width: 22, height: 4, borderRadius: 2, backgroundColor: 'transparent', marginBottom: 5 },
-  pestanaTexto: { fontSize: 12, color: C.suave, fontWeight: '600' },
+  pestanas: { flexDirection: 'row', backgroundColor: C.blanco, borderTopWidth: 1, borderTopColor: C.linea, paddingBottom: 8, paddingTop: 6 },
+  pestana: { flex: 1, alignItems: 'center' },
+  pestanaIcono: { width: 46, height: 30, borderRadius: 15, alignItems: 'center', justifyContent: 'center' },
+  pestanaTexto: { fontSize: 11, color: C.suave, fontWeight: '600', marginTop: 2 },
 });

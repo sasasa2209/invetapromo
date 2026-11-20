@@ -1,30 +1,62 @@
 import { diaSemana, redondea, sumaDias } from './logica';
 
+export const ETIQUETAS = ['Comida corrida', 'Desayunos', 'Hecho en casa', 'Tradicional', 'Antojitos', 'Para llevar', 'Cenas', 'Bar'];
+
 // Negocios de ejemplo para el modo cliente (inventados para la demo)
 export const NEGOCIOS_DEMO = [
   {
-    id: 'd1', nombre: 'Tacos El Mezquite', tipo: 'Tacos', abre: '18:00', cierra: '01:00',
-    ubicacion: 'Col. Centro, Durango', distancia: 0.6,
-    menu: [{ nombre: 'Taco de asada', precio: 25 }, { nombre: 'Taco al pastor', precio: 22 }, { nombre: 'Gringa', precio: 55 }],
-    oferta: { titulo: 'Gringas 2x1', descripcion: 'Sobró tortilla de harina: 2x1 en gringas.', precio: 55 },
+    id: 'd2', nombre: 'Lonchería La Güera', tipo: 'Comida corrida', abre: '08:00', cierra: '17:00',
+    ubicacion: 'Col. Guadalupe, Durango', distancia: 0.8,
+    estrella: 'Caldillo duranguense', etiquetas: ['Comida corrida', 'Hecho en casa', 'Tradicional'],
+    historia: 'Desde 1998. Doña Rosa cocina cada día la sopa, el guisado y el caldillo como en casa.',
+    local: 'Carne y chile de productores de la región',
+    menu: [{ nombre: 'Comida corrida', precio: 85 }, { nombre: 'Caldillo duranguense', precio: 75 }, { nombre: 'Enchiladas', precio: 65 }],
+    oferta: { titulo: 'Caldillo + agua fresca', descripcion: 'Caldillo duranguense con tortillas hechas a mano y agua de limón.', precio: 79, porciones: 8 },
   },
   {
-    id: 'd2', nombre: 'Lonchería La Güera', tipo: 'Comida corrida', abre: '08:00', cierra: '17:00',
-    ubicacion: 'Col. Guadalupe, Durango', distancia: 1.2,
-    menu: [{ nombre: 'Comida corrida', precio: 85 }, { nombre: 'Caldo de res', precio: 70 }, { nombre: 'Enchiladas', precio: 65 }],
-    oferta: { titulo: 'Caldo de res + agua', descripcion: 'Caldo con verduras frescas del día y agua de limón.', precio: 79 },
+    id: 'd4', nombre: 'Caldos Doña Lupe', tipo: 'Desayunos y caldos', abre: '07:00', cierra: '15:00',
+    ubicacion: 'Col. Fátima, Durango', distancia: 2.1,
+    estrella: 'Menudo de los domingos', etiquetas: ['Desayunos', 'Hecho en casa', 'Tradicional'],
+    historia: 'Un puesto de familia que empezó en la esquina del mercado. El menudo se cuece desde las 4 de la mañana.',
+    local: 'Maíz y chile de la sierra',
+    menu: [{ nombre: 'Menudo', precio: 90 }, { nombre: 'Caldo de pollo', precio: 70 }, { nombre: 'Birria', precio: 95 }],
+    oferta: { titulo: 'Menudo + tortillas', descripcion: 'Plato grande de menudo con tortillas calientes.', precio: 85, porciones: 6 },
+  },
+  {
+    id: 'd5', nombre: 'Gorditas La Abuela', tipo: 'Antojitos', abre: '09:00', cierra: '20:00',
+    ubicacion: 'Col. Centro, Durango', distancia: 0.5,
+    estrella: 'Gordita de chicharrón', etiquetas: ['Antojitos', 'Hecho en casa', 'Para llevar'],
+    historia: 'Masa hecha a diario y guisados de olla. Lo que se acaba, se acaba.',
+    local: 'Masa de maíz de molino local',
+    menu: [{ nombre: 'Gordita de chicharrón', precio: 28 }, { nombre: 'Gordita de queso', precio: 28 }, { nombre: 'Gordita de picadillo', precio: 30 }],
+    oferta: null,
+  },
+  {
+    id: 'd6', nombre: 'Panadería La Espiga', tipo: 'Pan de pueblo', abre: '06:00', cierra: '14:00',
+    ubicacion: 'Col. Silvestre Dorador, Durango', distancia: 1.6,
+    estrella: 'Pan de pueblo recién horneado', etiquetas: ['Desayunos', 'Tradicional', 'Para llevar'],
+    historia: 'Horno de leña y receta de tres generaciones. El pan sale por tandas toda la mañana.',
+    local: 'Harina y piloncillo de la región',
+    menu: [{ nombre: 'Pan de pueblo (pieza)', precio: 8 }, { nombre: 'Empanada', precio: 18 }, { nombre: 'Café de olla', precio: 25 }],
+    oferta: { titulo: 'Bolsa de 8 panes del día', descripcion: 'Pan surtido de la última tanda, a precio especial.', precio: 49, porciones: 10 },
+  },
+  {
+    id: 'd1', nombre: 'Tacos El Mezquite', tipo: 'Tacos', abre: '18:00', cierra: '01:00',
+    ubicacion: 'Col. Centro, Durango', distancia: 0.6,
+    estrella: 'Taco de asada al mezquite', etiquetas: ['Cenas', 'Antojitos', 'Para llevar'],
+    historia: 'Don Beto asa la carne sobre leña de mezquite todas las noches desde hace 20 años.',
+    local: 'Carne de ranchos de la región',
+    menu: [{ nombre: 'Taco de asada', precio: 25 }, { nombre: 'Taco al pastor', precio: 22 }, { nombre: 'Gringa', precio: 55 }],
+    oferta: { titulo: 'Gringas 2x1', descripcion: 'Sobró tortilla de harina: 2x1 en gringas.', precio: 55, porciones: 5 },
   },
   {
     id: 'd3', nombre: 'Bar El Alacrán', tipo: 'Bar', abre: '17:00', cierra: '02:00',
-    ubicacion: 'Col. Zona Centro, Durango', distancia: 0.9,
-    menu: [{ nombre: 'Cerveza de barril', precio: 45 }, { nombre: 'Micheladas', precio: 70 }, { nombre: 'Alitas', precio: 120 }],
-    oferta: { titulo: 'Michelada + alitas', descripcion: 'Combo para compartir mientras dure el limón.', precio: 160 },
-  },
-  {
-    id: 'd4', nombre: 'Caldos Doña Lupe', tipo: 'Caldos y menudo', abre: '07:00', cierra: '15:00',
-    ubicacion: 'Col. Fátima, Durango', distancia: 2.1,
-    menu: [{ nombre: 'Menudo', precio: 90 }, { nombre: 'Caldo de pollo', precio: 70 }, { nombre: 'Birria', precio: 95 }],
-    oferta: null,
+    ubicacion: 'Zona Centro, Durango', distancia: 0.9,
+    estrella: 'Michelada de la casa', etiquetas: ['Bar', 'Cenas', 'Antojitos'],
+    historia: 'Un bar de barrio con botanas caseras y cerveza bien fría.',
+    local: '',
+    menu: [{ nombre: 'Cerveza de barril', precio: 45 }, { nombre: 'Michelada', precio: 70 }, { nombre: 'Alitas', precio: 120 }],
+    oferta: { titulo: 'Michelada + alitas', descripcion: 'Combo para compartir mientras dure el limón.', precio: 160, porciones: 4 },
   },
 ];
 

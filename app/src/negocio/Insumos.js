@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { ScrollView, View, Text, Modal, Alert } from 'react-native';
+import { ScrollView, View, Text, Modal } from 'react-native';
+import { avisar } from '../compartido/aviso';
 import { Tarjeta, Etiqueta, Vacio, Boton, Campo, Pantalla, estilos as e } from '../compartido/componentes';
 import { useAlmacen } from '../compartido/Almacen';
 import { fmt, num } from '../compartido/logica';
@@ -13,7 +14,7 @@ export default function Insumos() {
   const abrir = (i) =>
     setForm(i ? { ...i, minimo: String(i.minimo), stock: String(i.stock), caduca: i.caduca || '' } : { ...VACIO });
   const guardar = () => {
-    if (!form.nombre.trim()) return Alert.alert('Falta el nombre', 'Escribe cómo se llama el insumo.');
+    if (!form.nombre.trim()) return avisar('Falta el nombre', 'Escribe cómo se llama el insumo.');
     guardarInsumo({ ...form, nombre: form.nombre.trim(), unidad: form.unidad.trim() || 'pzas', minimo: num(form.minimo), stock: num(form.stock) });
     setForm(null);
   };

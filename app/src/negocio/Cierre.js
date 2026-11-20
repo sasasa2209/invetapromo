@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { ScrollView, View, Text, Alert } from 'react-native';
+import { ScrollView, View, Text } from 'react-native';
+import { avisar } from '../compartido/aviso';
 import { Tarjeta, Etiqueta, Vacio, Boton, Campo, estilos as e } from '../compartido/componentes';
 import { useAlmacen } from '../compartido/Almacen';
 import { calcularConsumo, fmt, hoyISO, num, redondea } from '../compartido/logica';
@@ -22,7 +23,7 @@ export default function Cierre({ alTerminar }) {
 
   const cerrar = () => {
     registrarCierre({ compras, quedo });
-    Alert.alert('Cierre guardado', 'Ya actualizamos tu inventario, las alertas y la predicción.');
+    avisar('Cierre guardado', 'Ya actualizamos tu inventario, las alertas y la predicción.');
     alTerminar();
   };
 

@@ -9,22 +9,24 @@ import Especial from './Especial';
 import MiNegocio from './MiNegocio';
 
 const PESTANAS = [
-  { id: 'resumen', texto: 'Resumen' },
-  { id: 'insumos', texto: 'Insumos' },
-  { id: 'cierre', texto: 'Cierre' },
-  { id: 'especial', texto: 'Especial' },
-  { id: 'negocio', texto: 'Mi negocio' },
+  { id: 'resumen', texto: 'Resumen', icono: '📋' },
+  { id: 'insumos', texto: 'Insumos', icono: '📦' },
+  { id: 'cierre', texto: 'Cierre', icono: '🌙' },
+  { id: 'especial', texto: 'Especial', icono: '⭐' },
+  { id: 'negocio', texto: 'Mi negocio', icono: '🏪' },
 ];
+const TITULOS = {
+  resumen: 'Resumen', insumos: 'Insumos', cierre: 'Cierre del día', especial: 'Especial del día', negocio: 'Mi negocio',
+};
 
 export default function NegocioApp() {
   const { estado, setModo } = useAlmacen();
   const [tab, setTab] = useState('resumen');
-  const titulos = { resumen: 'Resumen', insumos: 'Insumos', cierre: 'Cierre del día', especial: 'Especial del día', negocio: 'Mi negocio' };
 
   return (
     <Pantalla>
       <Encabezado
-        titulo={titulos[tab]}
+        titulo={TITULOS[tab]}
         sub={estado.negocio.nombre || 'Modo negocio'}
         derecha={<Boton texto="Cambiar modo" tipo="suave" onPress={() => setModo(null)} style={{ paddingVertical: 8 }} />}
       />
